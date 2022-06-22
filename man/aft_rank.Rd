@@ -2,7 +2,7 @@
 % Please edit documentation in R/aft_rank.R
 \name{aft_rank}
 \alias{aft_rank}
-\title{Fit the DR-RML model}
+\title{rankIC}
 \usage{
 aft_rank(
   L,
@@ -46,10 +46,28 @@ aft_rank(
 }
 }
 \description{
-Estimate double-robust average causal effect for restricted mean lifetime.
+Fit the semiparametric accelerated failure time model with rank regression.
 }
 \details{
 see Choi et al., (2022+) for detailed method explanation.
+}
+\examples{
+\dontrun{
+library(PICBayes)
+data(mCRC)
+dt0 = as.data.frame(mCRC)
+dt = with(dt0,
+data.frame(L = ifelse(is.na(L), 0, L),
+R = ifelse(is.na(R), Inf, R),
+delta = 1-IC,
+x1 = TRT_C,
+x2 = KRAS_C,
+id = SITE))
+d = dt
+L = d$L; R = d$R; X = cbind(d$x1,d$x2); delta = d$delta; id = d$id
+aft_rank(L,R,X,delta,id, alpha = 1, type = "gehan")
+aft_rank(L,R,X,delta,id, alpha = 1, type = "logrank")
+}
 }
 \references{
 Cao, W., Tsiatis, A. A., & Davidian, M. (2009). Improving efficiency and robustness of the doubly robust estimator for a population mean with incomplete data. \emph{Biometrika}, \bold{96}(3), 723--734.

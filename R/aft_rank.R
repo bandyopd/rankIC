@@ -1,8 +1,8 @@
-#' @importFrom stats as.formula binomial lm predict sd tidyverse quantreg
+#' @importFrom stats as.formula binomial lm predict sd
 NULL
-#' Fit the DR-RML model
+#' rankIC
 #'
-#' Estimate double-robust average causal effect for restricted mean lifetime.
+#' Fit the semiparametric accelerated failure time model with rank regression.
 #'
 #'
 #' @param L left-censoring time, having 0 if left-censored.
@@ -35,20 +35,19 @@ NULL
 #' \dontrun{
 #' library(PICBayes)
 #' data(mCRC)
-#' head(mCRC)
 #' dt0 = as.data.frame(mCRC)
 #' dt = with(dt0,
-#'           data.frame(L = ifelse(is.na(L), 0, L),
-#                      R = ifelse(is.na(R), Inf, R),
-#                      delta = 1-IC,
-#                      x1 = TRT_C,
-#                      x2 = KRAS_C,
-#                      id = SITE))
-# d = dt
-# L = d$L; R = d$R; X = cbind(d$x1,d$x2); delta = d$delta; id = d$id
-#
-# aft_rank(L,R,X,delta,id, alpha = 1, type = "gehan")
-# aft_rank(L,R,X,delta,id, alpha = 1, type = "logrank")
+#' data.frame(L = ifelse(is.na(L), 0, L),
+#' R = ifelse(is.na(R), Inf, R),
+#' delta = 1-IC,
+#' x1 = TRT_C,
+#' x2 = KRAS_C,
+#' id = SITE))
+#' d = dt
+#' L = d$L; R = d$R; X = cbind(d$x1,d$x2); delta = d$delta; id = d$id
+#' aft_rank(L,R,X,delta,id, alpha = 1, type = "gehan")
+#' aft_rank(L,R,X,delta,id, alpha = 1, type = "logrank")
+#' }
 #' @export
 #'
 #'
@@ -112,7 +111,7 @@ aft_rank=function(L, R, X, delta, id = NULL, alpha=1,
 
     efun = function(L,R,delta,X,id,beta,type,alpha) {
       # n = nrow(d)
-      y = pmax(d$L,1e-8);
+      y = pmax(L,1e-8);
       # delta = d$delta; id = d$id
       # x1 = d$x1; x2 = d$x2; x = cbind(x1,x2)
       # L = log(y); R = log(d$R)
@@ -142,12 +141,12 @@ aft_rank=function(L, R, X, delta, id = NULL, alpha=1,
       n^(-1/2)*efun(L[Bid],R[Bid],delta[Bid],X[Bid,],id[Bid],est,type,alpha)
       }))
     An = matrix(0, p, p)
-    zmat = matrix(rnorm(p*B),B,p)
+    zmat = matrix(stats::rnorm(p*B),B,p)
     U = matrix(0, B, p)
     for(b in 1:B){
       U[b,]= efun(L,R,delta,X,id,est+n^(-1/2)*zmat[b,], type=type,alpha)*n^(-1/2)
     }
-    Vi=var(Shat)
+    Vi=stats::var(Shat)
     for (i in 1:p) {
       An[i,]=lm(U[,i]~matrix(zmat,ncol=p))$coef[-1]
     }
