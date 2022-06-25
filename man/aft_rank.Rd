@@ -36,13 +36,14 @@ aft_rank(
 
 \item{tol}{tolerance of iteration for the log-rank estimator, default is 1e-5.}
 
-\item{nboot}{number of bootstrapped sample generation for variance estimation (Zeng and Lin, 2008) of regression estimator.}
+\item{nboot}{number of bootstrapped sample generation for variance estimation of regression estimator (Zeng and Lin, 2008), 200 is usually recommended.}
 }
 \value{
 \code{aft_rank} returns a data frame containing at least the following components:
 \itemize{
   \item \code{est}: regression estimator.
   \item \code{se}: standard error estimates for \code{est}.
+  \item \code{pvalue}: p-value, which will be appeared when the value of \code{nboot} is larger than one.
 }
 }
 \description{
@@ -53,24 +54,28 @@ see Choi et al., (2022+) for detailed method explanation.
 }
 \examples{
 \dontrun{
+# Simulations
+
+
+# Data example
 library(PICBayes)
 data(mCRC)
 dt0 = as.data.frame(mCRC)
 dt = with(dt0,
-data.frame(L = ifelse(is.na(L), 0, L),
-R = ifelse(is.na(R), Inf, R),
-delta = 1-IC,
-x1 = TRT_C,
-x2 = KRAS_C,
-id = SITE))
+          data.frame(L = ifelse(is.na(L), 0, L),
+                     R = ifelse(is.na(R), Inf, R),
+                     delta = 1-IC,
+                     x1 = TRT_C,
+                     x2 = KRAS_C,
+                     id = SITE))
 d = dt
 L = d$L; R = d$R; X = cbind(d$x1,d$x2); delta = d$delta; id = d$id
-aft_rank(L,R,X,delta,id, alpha = 1, type = "gehan")
-aft_rank(L,R,X,delta,id, alpha = 1, type = "logrank")
+aft_rank(L,R,X,delta,id, alpha = 1, type = "gehan", nboot = 10)
+aft_rank(L,R,X,delta,id, alpha = 1, type = "logrank", nboot = 10)
 }
 }
 \references{
-Cao, W., Tsiatis, A. A., & Davidian, M. (2009). Improving efficiency and robustness of the doubly robust estimator for a population mean with incomplete data. \emph{Biometrika}, \bold{96}(3), 723--734.
+Zeng, D. and Lin, D. (2008). Efficient resampling methods for nonsmooth estimat- ing functions, Biostatistics 9(2): 355–363.
 
-Choi, S., Choi, T., Lee, H-Y., Han, S. W., Bandyopadhyay, D. (2022+). Double-robust methods for estimating differences in restricted mean lifetimes using pseudo-observations. In revision, \emph{Pharmaceutical Statistics}.
+Choi, T., Choi, S. and Bandyopadhyay, D. (2022+). Rank estimation for the accelerated failure time model with partially interval-censored data. Submitted, \emph{Biometrics}.
 }

@@ -37,16 +37,16 @@ NULL
 #' data(mCRC)
 #' dt0 = as.data.frame(mCRC)
 #' dt = with(dt0,
-#' data.frame(L = ifelse(is.na(L), 0, L),
-#' R = ifelse(is.na(R), Inf, R),
-#' delta = 1-IC,
-#' x1 = TRT_C,
-#' x2 = KRAS_C,
-#' id = SITE))
+#'           data.frame(L = ifelse(is.na(L), 0, L),
+#'                      R = ifelse(is.na(R), Inf, R),
+#'                      delta = 1-IC,
+#'                      x1 = TRT_C,
+#'                      x2 = KRAS_C,
+#'                      id = SITE))
 #' d = dt
 #' L = d$L; R = d$R; X = cbind(d$x1,d$x2); delta = d$delta; id = d$id
-#' aft_rank(L,R,X,delta,id, alpha = 1, type = "gehan")
-#' aft_rank(L,R,X,delta,id, alpha = 1, type = "logrank")
+#' aft_rank(L,R,X,delta,id, alpha = 1, type = "gehan", nboot = 10)
+#' aft_rank(L,R,X,delta,id, alpha = 1, type = "logrank", nboot = 10)
 #' }
 #' @export
 #'
