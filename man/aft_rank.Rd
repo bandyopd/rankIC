@@ -36,7 +36,7 @@ aft_rank(
 
 \item{tol}{tolerance of iteration for the log-rank estimator, default is 1e-5.}
 
-\item{nboot}{number of bootstrapped sample generation for variance estimation of regression estimator (Zeng and Lin, 2008), 200 is usually recommended.}
+\item{nboot}{number of bootstrapped sample generation for variance estimation of regression estimator (Zeng and Lin, 2008). For stable estimation, \code{nboot=200} is usually recommended.}
 }
 \value{
 \code{aft_rank} returns a data frame containing at least the following components:
@@ -55,23 +55,35 @@ see Choi et al., (2022+) for detailed method explanation.
 \examples{
 \dontrun{
 # Simulations
-
+set.seed(111)
+n = 200
+x1 = rnorm(n)
+x2 = ifelse(rnorm(n)>0, 1, 0)
+X = cbind(x1,x2)
+T = 2 + x1 + x2 + rnorm(n)
+L = (1 - 0.25*x1)*runif(n, -6, 3.85)
+R = L + (1-0.5*x2)*runif(n, 6, 19.6)
+L = exp(dplyr::case_when(TRUE ~ T, T>R ~ R, T<L ~ -Inf))
+R = exp(dplyr::case_when(TRUE ~ T, T>R ~ Inf, T<L ~ L))
+delta = ifelse(L==R, 1, 0)
+aft_rank(L,R,X,delta)
 
 # Data example
 library(PICBayes)
 data(mCRC)
 dt0 = as.data.frame(mCRC)
-dt = with(dt0,
-          data.frame(L = ifelse(is.na(L), 0, L),
-                     R = ifelse(is.na(R), Inf, R),
-                     delta = 1-IC,
-                     x1 = TRT_C,
-                     x2 = KRAS_C,
-                     id = SITE))
-d = dt
-L = d$L; R = d$R; X = cbind(d$x1,d$x2); delta = d$delta; id = d$id
-aft_rank(L,R,X,delta,id, alpha = 1, type = "gehan", nboot = 10)
-aft_rank(L,R,X,delta,id, alpha = 1, type = "logrank", nboot = 10)
+d = with(dt0,
+         data.frame(L = ifelse(is.na(L), 0, L),
+                    R = ifelse(is.na(R), Inf, R),
+                    delta = 1-IC,
+                    x1 = TRT_C,
+                    x2 = KRAS_C,
+                    id = SITE))
+L = d$L; R = d$R; X = cbind(d$x1, d$x2); delta = d$delta; id = d$id
+aft_rank(L = L, R = R, X = X, delta = delta, id = id, 
+         alpha = 1, type = "gehan", nboot = 10)
+aft_rank(L = L, R = R, X = X, delta = delta, id = id, 
+         alpha = 1, type = "logrank", nboot = 10)
 }
 }
 \references{
