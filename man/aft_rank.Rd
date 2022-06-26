@@ -5,10 +5,10 @@
 \title{rankIC}
 \usage{
 aft_rank(
-  L,
-  R,
+  U,
+  V,
   X,
-  delta,
+  Delta,
   id = NULL,
   alpha = 1,
   type = c("gehan", "logrank"),
@@ -18,13 +18,13 @@ aft_rank(
 )
 }
 \arguments{
-\item{L}{left-censoring time, having 0 if left-censored.}
+\item{U}{left-censoring time, having 0 if left-censored.}
 
-\item{R}{right-censoring time, having \code{Inf} if right-censored.}
+\item{V}{right-censoring time, having \code{Inf} if right-censored.}
 
 \item{X}{baseline covariate.}
 
-\item{delta}{censoring indicator, 1: observed; 0: interval-censored.}
+\item{Delta}{censoring indicator, 1: observed; 0: interval-censored.}
 
 \item{id}{cluster id. If the data does not have clustered structure, set \code{id=NULL}.}
 
@@ -36,7 +36,7 @@ aft_rank(
 
 \item{tol}{tolerance of iteration for the log-rank estimator, default is 1e-5.}
 
-\item{nboot}{number of bootstrapped sample generation for variance estimation of regression estimator (Zeng and Lin, 2008). For stable estimation, \code{nboot=200} is usually recommended.}
+\item{nboot}{number of bootstrapped sample generation for variance estimation of regression estimator (Zeng and Uin, 2008). For stable estimation, \code{nboot=200} is usually recommended.}
 }
 \value{
 \code{aft_rank} returns a data frame containing at least the following components:
@@ -61,33 +61,33 @@ x1 = rnorm(n)
 x2 = ifelse(rnorm(n)>0, 1, 0)
 X = cbind(x1,x2)
 T = 2 + x1 + x2 + rnorm(n)
-L = (1 - 0.25*x1)*runif(n, -6, 3.85)
-R = L + (1-0.5*x2)*runif(n, 6, 19.6)
-L = exp(dplyr::case_when(TRUE ~ T, T>R ~ R, T<L ~ -Inf))
-R = exp(dplyr::case_when(TRUE ~ T, T>R ~ Inf, T<L ~ L))
-delta = ifelse(L==R, 1, 0)
-aft_rank(L,R,X,delta)
+U = (1 - 0.25*x1)*runif(n, -6, 3.85)
+V = U + (1-0.5*x2)*runif(n, 6, 19.6)
+U = exp(dplyr::case_when(TRUE ~ T, T>V ~ V, T<U ~ -Inf))
+V = exp(dplyr::case_when(TRUE ~ T, T>V ~ Inf, T<U ~ U))
+Delta = ifelse(U==V, 1, 0)
+aft_rank(U,V,X,Delta)
 
 # Data example
 library(PICBayes)
 data(mCRC)
 dt0 = as.data.frame(mCRC)
 d = with(dt0,
-         data.frame(L = ifelse(is.na(L), 0, L),
-                    R = ifelse(is.na(R), Inf, R),
-                    delta = 1-IC,
+         data.frame(U = ifelse(is.na(L), 0, L),
+                    V = ifelse(is.na(R), Inf, R),
+                    Delta = 1-IC,
                     x1 = TRT_C,
                     x2 = KRAS_C,
                     id = SITE))
-L = d$L; R = d$R; X = cbind(d$x1, d$x2); delta = d$delta; id = d$id
-aft_rank(L = L, R = R, X = X, delta = delta, id = id, 
+U = d$U; V = d$V; X = cbind(d$x1, d$x2); Delta = d$Delta; id = d$id
+aft_rank(U = U, V = V, X = X, Delta = Delta, id = id, 
          alpha = 1, type = "gehan", nboot = 10)
-aft_rank(L = L, R = R, X = X, delta = delta, id = id, 
+aft_rank(U = U, V = V, X = X, Delta = Delta, id = id, 
          alpha = 1, type = "logrank", nboot = 10)
 }
 }
 \references{
-Zeng, D. and Lin, D. (2008). Efficient resampling methods for nonsmooth estimat- ing functions, Biostatistics 9(2): 355–363.
+Zeng, D. and Uin, D. (2008). Efficient resampling methods for nonsmooth estimat- ing functions, Biostatistics 9(2): 355–363.
 
 Choi, T., Choi, S. and Bandyopadhyay, D. (2022+). Rank estimation for the accelerated failure time model with partially interval-censored data. Submitted, \emph{Biometrics}.
 }
