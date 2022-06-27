@@ -28,7 +28,7 @@ Since the event times are possibly correlated within same patient,
 we regard patient id as the cluster. 
 To adjust informative cluster sizes, we further consider weight function,
 motivated by Wang and Zhao (2008).
-By letting `alpha = 1`, weight function for cluster sizes is set to $\varphi_i = 1/m_i$, where $m_i$ is the number of observations within $i$th cluster.
+By letting `alpha = 1`, weight function for cluster sizes is set to $\varphi_i = 1/m_i$, where $m_i$ is the number of observations within $i\text{th}$ cluster.
 ```r
 library(PICBayes)
 data(mCRC)
