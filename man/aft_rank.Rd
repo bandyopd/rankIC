@@ -28,7 +28,7 @@ aft_rank(
 
 \item{id}{cluster id. If the data does not have clustered structure, set \code{id=NULL}.}
 
-\item{alpha}{scalar to adjust informative cluster sizes, $0\alpha\le1$. Cluster size will be ignored by using \code{alpha=0}.}
+\item{alpha}{scalar to adjust informative cluster sizes, 0<alpha<=1. Cluster size will be ignored by using \code{alpha=0}.}
 
 \item{type}{type of rank estimation, \code{gehan}: gehan estimation; \code{logrank}: log-rank estimation.}
 

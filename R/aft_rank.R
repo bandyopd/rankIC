@@ -10,7 +10,7 @@ NULL
 #' @param Delta censoring indicator, 1: observed; 0: interval-censored.
 #' @param X baseline covariate.
 #' @param id cluster id. If the data does not have clustered structure, set \code{id=NULL}.
-#' @param alpha scalar to adjust informative cluster sizes, $0\alpha\le1$. Cluster size will be ignored by using \code{alpha=0}.
+#' @param alpha scalar to adjust informative cluster sizes, 0<alpha<=1. Cluster size will be ignored by using \code{alpha=0}.
 #' @param type type of rank estimation, \code{gehan}: gehan estimation; \code{logrank}: log-rank estimation.
 #' @param maxit maximum number of iteration for the log-rank estimator, default is 20.
 #' @param tol tolerance of iteration for the log-rank estimator, default is 1e-5.
