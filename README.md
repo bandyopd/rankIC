@@ -56,5 +56,10 @@ Rank estimation for the accelerated failure time model with partially interval-c
 
 * Wang, Y. G. and Zhao, Y. (2008). 
 Weighted rank regression for clustered data analysis. 
-Biometrics, 64(1), 39-45.
+Biometrics, 64(1), 39--45.
+
+* Pan, C. (2021).
+PICBayes: Bayesian Models for Partly Interval-Censored Data.
+R package.
+https://CRAN.R-project.org/package=PICBayes.
 
