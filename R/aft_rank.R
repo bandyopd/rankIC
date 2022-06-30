@@ -28,7 +28,7 @@ NULL
 #'
 #' @references
 #' Zeng, D. and Lin, D. (2008).  
-#' Efficient resampling methods for nonsmooth estimating functions. Biostatistics 9(2): 355–363.
+#' Efficient resampling methods for nonsmooth estimating functions. Biostatistics 9(2): 355–-363.
 #' 
 #' Choi, T., Choi, S. and Bandyopadhyay, D. (2022+). 
 #' Rank estimation for the accelerated failure time model with partially interval-censored data. 
@@ -45,11 +45,14 @@ NULL
 #' X = cbind(x1,x2)
 #' T = 2 + x1 + x2 + rnorm(n)
 #' U = (1 - 0.25*x1)*runif(n, -6, 3.85)
-#' V = U + (1-0.5*x2)*runif(n, 6, 19.6)
+#' V = U + (1 - 0.5*x2)*runif(n, 6, 19.6)
 #' U = exp(dplyr::case_when(TRUE ~ T, T>V ~ V, T<U ~ -Inf))
 #' V = exp(dplyr::case_when(TRUE ~ T, T>V ~ Inf, T<U ~ U))
 #' Delta = ifelse(U==V, 1, 0)
-#' aft_rank(U,V,X,Delta)
+#' aft_rank(U = U, V = V, X = X, Delta = Delta,
+#'          type = "gehan", nboot = 10)
+#' aft_rank(U = U, V = V, X = X, Delta = Delta,
+#'          type = "logrank", nboot = 10)
 #' 
 #' # Data example
 #' library(PICBayes)
@@ -62,7 +65,7 @@ NULL
 #'                     x1 = TRT_C,
 #'                     x2 = KRAS_C,
 #'                     id = SITE))
-#' U = d$U; V = d$V; X = cbind(d$x1, d$x2); Delta = d$Delta; id = d$id
+#' U = d$U; V = d$V; X = cbind(d$x1,d$x2); Delta = d$Delta; id = d$id
 #' aft_rank(U = U, V = V, X = X, Delta = Delta, id = id, 
 #'          alpha = 1, type = "gehan", nboot = 10)
 #' aft_rank(U = U, V = V, X = X, Delta = Delta, id = id, 
@@ -79,13 +82,14 @@ NULL
 aft_rank=function(U, V, X, Delta, 
                   id = NULL, alpha = 1, type = c("gehan","logrank"), 
                   maxit = 20, tol = 1e-5, nboot = 0){
+  if (is.null(id)) id = rep(1,length(U))
+  
   gkern=function(x, h=0.01) 1/(1 + exp(-x/h))
 
   wgh_fit = function(U, V, X, Delta, 
                      id = NULL, alpha = 1,
                      weight = rep(1, length(U)))
   {
-    if (is.null(id)) id = rep(1,length(U))
     options(warn = -1)
     n = length(U)
     y = U
