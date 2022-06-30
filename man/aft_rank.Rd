@@ -28,7 +28,7 @@ aft_rank(
 
 \item{id}{cluster id. If the data does not have clustered structure, set \code{id=NULL}.}
 
-\item{alpha}{scalar to adjust informative cluster sizes, 0<alpha<=1. Cluster size will be ignored by using \code{alpha=0}.}
+\item{alpha}{scalar to adjust informative cluster sizes, 0<alpha<=1. Cluster size will be ignored by letting \code{alpha=0}.}
 
 \item{type}{type of rank estimation, \code{gehan}: gehan estimation; \code{logrank}: log-rank estimation.}
 
@@ -36,7 +36,7 @@ aft_rank(
 
 \item{tol}{tolerance of iteration for the log-rank estimator, default is 1e-5.}
 
-\item{nboot}{number of bootstrapped sample generation for variance estimation of regression estimator (Zeng and Uin, 2008). For stable estimation, \code{nboot=200} is usually recommended.}
+\item{nboot}{the number of bootstrapped sample generation for variance estimation of regression estimator (Zeng and Uin, 2008). For stable estimation, \code{nboot=200} is usually recommended.}
 }
 \value{
 \code{aft_rank} returns a data frame containing at least the following components:
