@@ -55,6 +55,7 @@ see Choi et al., (2022+) for detailed method explanation.
 \examples{
 \dontrun{
 # Simulations
+library(rankIC)
 set.seed(111)
 n = 200
 x1 = rnorm(n)
