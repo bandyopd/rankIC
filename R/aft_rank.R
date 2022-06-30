@@ -27,17 +27,11 @@ NULL
 #' see Choi et al., (2022+) for detailed method explanation.
 #'
 #' @references
-#' Zeng, D. and Lin, D. (2008).  
-#' Efficient resampling methods for nonsmooth estimating functions. Biostatistics 9(2): 355–-363.
+#' Zeng, D. and Lin, D. (2008). Efficient resampling methods for nonsmooth estimating functions. Biostatistics 9(2): 355–-363.
 #' 
-#' Choi, T., Choi, S. and Bandyopadhyay, D. (2022+). 
-#' Rank estimation for the accelerated failure time model with partially interval-censored data. 
-#' Submitted to Biometrics.
+#' Choi, T., Choi, S. and Bandyopadhyay, D. (2022+). Rank estimation for the accelerated failure time model with partially interval-censored data. Submitted to Biometrics.
 #' 
-#' Pan, C. (2021).
-#' PICBayes: Bayesian Models for Partly Interval-Censored Data.
-#' R package.
-#' https://CRAN.R-project.org/package=PICBayes.
+#' Pan, C. (2021). PICBayes: Bayesian Models for Partly Interval-Censored Data. R package. https://CRAN.R-project.org/package=PICBayes.
 #'
 #'
 #' @examples
@@ -215,7 +209,6 @@ aft_rank=function(U, V, X, Delta,
   }
   return(round(res, 3))
 }
-
 
 
 
