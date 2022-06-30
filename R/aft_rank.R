@@ -33,6 +33,11 @@ NULL
 #' Choi, T., Choi, S. and Bandyopadhyay, D. (2022+). 
 #' Rank estimation for the accelerated failure time model with partially interval-censored data. 
 #' Submitted to Biometrics.
+#' 
+#' Pan, C. (2021).
+#' PICBayes: Bayesian Models for Partly Interval-Censored Data.
+#' R package.
+#' https://CRAN.R-project.org/package=PICBayes.
 #'
 #'
 #' @examples
@@ -130,11 +135,12 @@ aft_rank=function(U, V, X, Delta,
                           (mj^alpha), id_i), mean)[id_i], 1e-3)
   }
 
-  aft_rq_se = function(B, est = NULL, type = "gehan", alpha = 1) 
+  aft_rq_se = function(B, est = NULL, id, type = "gehan", alpha = 1) 
   {
     efun = function(U, V, Delta, X, id, beta, type, alpha) 
     {
       y = pmax(U, 1e-8);
+      U = log(y); V = log(V)
       n = length(U)
       m = table(id)
       id_i = rep(1:n, each = n)
@@ -159,19 +165,25 @@ aft_rank=function(U, V, X, Delta,
     }
     p = length(est); n = length(U)
     library(MASS)
-    Shat = t(replicate(B,{
-      Bid = sample(n, n, replace = TRUE);
-      n^(-1/2)*efun(U[Bid], V[Bid], Delta[Bid], 
-                    X[Bid,], id[Bid], est, type, alpha)}))
-    An = matrix(0, p, p)
+    # Shat = t(replicate(B,{
+    #   Bid = sample(n, n, replace = TRUE);
+    #   n^(-1/2)*efun(U[Bid], V[Bid], Delta[Bid], 
+    #                 X[Bid,], id[Bid], est, type, alpha)}))
     zmat = matrix(stats::rnorm(p*B), B, p)
     Umat = matrix(0, B, p)
+    Shat = NULL
     for(b in 1:B){
+      Bid = sample(n, n, replace = TRUE);
+      Shat = rbind(Shat,
+                     n^(-1/2)*efun(U[Bid], V[Bid], Delta[Bid], 
+                                   X[Bid,], id[Bid], est, type, alpha))
       Umat[b,] = efun(U, V, Delta, X, id,
                    est+n^(-1/2)*zmat[b,], 
                    type = type, alpha)*n^(-1/2)
     }
     Vi=stats::var(Shat)
+    
+    An = matrix(0, p, p)
     for (i in 1:p) {
       An[i,] = lm(Umat[,i] ~ matrix(zmat, ncol = p))$coef[-1]
     }
@@ -196,7 +208,7 @@ aft_rank=function(U, V, X, Delta,
   }
   res = cbind(est = beta_new)
   if (nboot > 1) {
-    se = aft_rq_se(est = beta_new, type = type, B = nboot, alpha = alpha)
+    se = aft_rq_se(est = beta_new, type = type, id = id, B = nboot, alpha = alpha)
     res = cbind(est = beta_new, 
                 se = se, 
                 pvalue = 1 - pnorm(abs(beta_new/se)))
