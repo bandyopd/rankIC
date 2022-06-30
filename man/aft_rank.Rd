@@ -2,7 +2,7 @@
 % Please edit documentation in R/aft_rank.R
 \name{aft_rank}
 \alias{aft_rank}
-\title{rankIC}
+\title{Fit the interval-censored AFT model with rank regressions}
 \usage{
 aft_rank(
   U,

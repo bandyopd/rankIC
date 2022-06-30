@@ -1,6 +1,6 @@
 #' @importFrom stats as.formula binomial lm predict sd
 NULL
-#' rankIC
+#' Fit the interval-censored AFT model with rank regressions
 #'
 #' Fit the semiparametric accelerated failure time model with rank regression.
 #'
