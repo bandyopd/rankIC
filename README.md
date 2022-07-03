@@ -1,4 +1,4 @@
-# `rankIC`: R package for fitting the partially interval-censored rank regressions
+# `rankIC`: R package for fitting partially interval-censored rank regressions
 
 ## Overview
 
