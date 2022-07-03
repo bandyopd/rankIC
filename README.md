@@ -52,7 +52,7 @@ aft_rank(U = U, V = V, X = X, Delta = Delta, id = id,
 ## Reference
 
 * Choi, T., Choi, S. and Bandyopadhyay, D. (2022+). 
-Rank estimation for the accelerated failure time model with partially interval-censored data. 
+Rank estimation for the accelerated failure time model with partially interval-censored data, (Under Review)
 
 * Wang, Y. G. and Zhao, Y. (2008). 
 Weighted rank regression for clustered data analysis. 
