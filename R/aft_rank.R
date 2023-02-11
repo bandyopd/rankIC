@@ -82,7 +82,6 @@ NULL
 aft_rank=function(U, V, X, Delta, 
                   id = NULL, alpha = 1, type = c("gehan","logrank"), 
                   maxit = 20, tol = 1e-5, R = 0){
-  # if (is.null(id)) id = rep(1,length(U))
   if (is.null(id)) id = 1:length(U)
   
   gkern=function(x, h=0.01) 1/(1 + exp(-x/h))
@@ -167,10 +166,6 @@ aft_rank=function(U, V, X, Delta,
     zmat = matrix(stats::rnorm(p*R), R, p)
     Shat = Umat = matrix(0, R, p)
     for(b in 1:R){
-      # Bid = sample(n, n, replace = TRUE);
-      # Shat = rbind(Shat,
-      #                n^(-1/2)*efun(U[Bid], V[Bid], Delta[Bid], 
-      #                              X[Bid,], id[Bid], est, type, alpha))
       Shat[b,] = n^(-1/2)*efun(U, V, Delta, X, id, est, type, alpha, 1)
       Umat[b,] = n^(-1/2)*efun(U, V, Delta, X, id, 
                                est+n^(-1/2)*zmat[b,], type, alpha, 0)

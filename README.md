@@ -44,9 +44,9 @@ d = with(dt0,
                     id = SITE))
 U = d$U; V = d$V; X = cbind(d$x1, d$x2); Delta = d$Delta; id = d$id
 aft_rank(U = U, V = V, X = X, Delta = Delta, id = id, 
-         alpha = 1, type = "gehan", nboot = 10)
+         alpha = 1, type = "gehan", R = 10)
 aft_rank(U = U, V = V, X = X, Delta = Delta, id = id, 
-         alpha = 1, type = "logrank", nboot = 10)
+         alpha = 1, type = "logrank", R = 10)
 ```
 
 ## Reference
