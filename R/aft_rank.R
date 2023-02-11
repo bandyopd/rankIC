@@ -132,17 +132,20 @@ aft_rank=function(U, V, X, Delta,
 
   aft_rq_se = function(B, est = NULL, id, type = "gehan", alpha = 1) 
   {
-    efun = function(U, V, Delta, X, id, beta, type, alpha) 
+    efun = function(U, V, Delta, X, id, beta, type, alpha, boot = c(0,1)) 
     {
       y = pmax(U, 1e-8);
       U = log(y); V = log(V)
       n = length(U)
       m = table(id)
+      if (boot == 1) z = rep(rexp(length(m)), times = m)
+      if (boot == 0) z = rep(1,n)
       id_i = rep(1:n, each = n)
       id_j = rep(1:n, times = n)
       xi = X[id_i,]; xj = X[id_j,]
       m = rep(m, m); mi = m[id_i]; mj = m[id_j]
       d1i = (V<Inf)[id_i]; d2j = (U>-Inf)[id_j]
+      zij = z[id_i]*z[id_j]
       idd = which(d1i*d2j == 1)
       yi = ifelse(Delta == 1, log(y), V)[id_i]
       yj = ifelse(Delta == 1, log(y), U)[id_j]
@@ -155,26 +158,21 @@ aft_rank=function(U, V, X, Delta,
           ifelse(yj > log(1e-8), ej - ei, 0))/(mj^alpha), 
           id_i),mean)[id_i], 1e-8)
       }
-      res = colMeans(d1i*d2j*wi/((mi*mj)^alpha)*(xi - xj)*eta)/n
+      res = colMeans(zij*d1i*d2j*wi/((mi*mj)^alpha)*(xi - xj)*eta)/n
       res
     }
     p = length(est); n = length(U)
     library(MASS)
-    # Shat = t(replicate(B,{
-    #   Bid = sample(n, n, replace = TRUE);
-    #   n^(-1/2)*efun(U[Bid], V[Bid], Delta[Bid], 
-    #                 X[Bid,], id[Bid], est, type, alpha)}))
     zmat = matrix(stats::rnorm(p*B), B, p)
-    Umat = matrix(0, B, p)
-    Shat = NULL
+    Shat = Umat = matrix(0, B, p)
     for(b in 1:B){
-      Bid = sample(n, n, replace = TRUE);
-      Shat = rbind(Shat,
-                     n^(-1/2)*efun(U[Bid], V[Bid], Delta[Bid], 
-                                   X[Bid,], id[Bid], est, type, alpha))
-      Umat[b,] = efun(U, V, Delta, X, id,
-                   est+n^(-1/2)*zmat[b,], 
-                   type = type, alpha)*n^(-1/2)
+      # Bid = sample(n, n, replace = TRUE);
+      # Shat = rbind(Shat,
+      #                n^(-1/2)*efun(U[Bid], V[Bid], Delta[Bid], 
+      #                              X[Bid,], id[Bid], est, type, alpha))
+      Shat[b,] = n^(-1/2)*efun(U, V, Delta, X, id, est, type, alpha, 1)
+      Umat[b,] = n^(-1/2)*efun(U, V, Delta, X, id, 
+                               est+n^(-1/2)*zmat[b,], type, alpha, 0)
     }
     Vi=stats::var(Shat)
     
