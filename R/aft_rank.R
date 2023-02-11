@@ -14,13 +14,13 @@ NULL
 #' @param type type of rank estimation, \code{gehan}: gehan estimation; \code{logrank}: log-rank estimation.
 #' @param maxit maximum number of iteration for the log-rank estimator, default is 20.
 #' @param tol tolerance of iteration for the log-rank estimator, default is 1e-5.
-#' @param nboot the number of bootstrapped sample generation for variance estimation of regression estimator (Zeng and Uin, 2008). For stable estimation, \code{nboot=200} is usually recommended.
+#' @param R the number of generating perturbed variable for variance estimation of regression estimator (Zeng and Uin, 2008). For stable estimation, \code{R=200} is usually recommended.
 #'
 #' @return \code{aft_rank} returns a data frame containing at least the following components:
 #' \itemize{
 #'   \item \code{est}: regression estimator.
 #'   \item \code{se}: standard error estimates for \code{est}.
-#'   \item \code{pvalue}: p-value, which will be appeared when the value of \code{nboot} is larger than one.
+#'   \item \code{pvalue}: p-value, which will be appeared when the value of \code{R} is larger than one.
 #' }
 #'
 #' @details
@@ -50,9 +50,9 @@ NULL
 #' V = exp(dplyr::case_when(TRUE ~ T, T>V ~ Inf, T<U ~ U))
 #' Delta = ifelse(U==V, 1, 0)
 #' aft_rank(U = U, V = V, X = X, Delta = Delta,
-#'          type = "gehan", nboot = 10)
+#'          type = "gehan", R = 10)
 #' aft_rank(U = U, V = V, X = X, Delta = Delta,
-#'          type = "logrank", nboot = 10)
+#'          type = "logrank", R = 10)
 #' 
 #' # Data example
 #' library(PICBayes)
@@ -67,9 +67,9 @@ NULL
 #'                     id = SITE))
 #' U = d$U; V = d$V; X = cbind(d$x1,d$x2); Delta = d$Delta; id = d$id
 #' aft_rank(U = U, V = V, X = X, Delta = Delta, id = id, 
-#'          alpha = 1, type = "gehan", nboot = 10)
+#'          alpha = 1, type = "gehan", R = 10)
 #' aft_rank(U = U, V = V, X = X, Delta = Delta, id = id, 
-#'          alpha = 1, type = "logrank", nboot = 10)
+#'          alpha = 1, type = "logrank", R = 10)
 #' }
 #' @export
 #'
@@ -81,7 +81,7 @@ NULL
 
 aft_rank=function(U, V, X, Delta, 
                   id = NULL, alpha = 1, type = c("gehan","logrank"), 
-                  maxit = 20, tol = 1e-5, nboot = 0){
+                  maxit = 20, tol = 1e-5, R = 0){
   if (is.null(id)) id = rep(1,length(U))
   
   gkern=function(x, h=0.01) 1/(1 + exp(-x/h))
@@ -130,7 +130,7 @@ aft_rank=function(U, V, X, Delta,
                           (mj^alpha), id_i), mean)[id_i], 1e-3)
   }
 
-  aft_rq_se = function(B, est = NULL, id, type = "gehan", alpha = 1) 
+  aft_rq_se = function(R, est = NULL, id, type = "gehan", alpha = 1) 
   {
     efun = function(U, V, Delta, X, id, beta, type, alpha, boot = c(0,1)) 
     {
@@ -163,9 +163,9 @@ aft_rank=function(U, V, X, Delta,
     }
     p = length(est); n = length(U)
     library(MASS)
-    zmat = matrix(stats::rnorm(p*B), B, p)
-    Shat = Umat = matrix(0, B, p)
-    for(b in 1:B){
+    zmat = matrix(stats::rnorm(p*R), R, p)
+    Shat = Umat = matrix(0, R, p)
+    for(b in 1:R){
       # Bid = sample(n, n, replace = TRUE);
       # Shat = rbind(Shat,
       #                n^(-1/2)*efun(U[Bid], V[Bid], Delta[Bid], 
@@ -200,8 +200,8 @@ aft_rank=function(U, V, X, Delta,
     }
   }
   res = cbind(est = beta_new)
-  if (nboot > 1) {
-    se = aft_rq_se(est = beta_new, type = type, id = id, B = nboot, alpha = alpha)
+  if (R > 1) {
+    se = aft_rq_se(est = beta_new, type = type, id = id, R = R, alpha = alpha)
     res = cbind(est = beta_new, 
                 se = se, 
                 pvalue = 1 - pnorm(abs(beta_new/se)))
