@@ -14,7 +14,7 @@ aft_rank(
   type = c("gehan", "logrank"),
   maxit = 20,
   tol = 1e-05,
-  nboot = 0
+  R = 0
 )
 }
 \arguments{
@@ -36,14 +36,14 @@ aft_rank(
 
 \item{tol}{tolerance of iteration for the log-rank estimator, default is 1e-5.}
 
-\item{nboot}{the number of bootstrapped sample generation for variance estimation of regression estimator (Zeng and Uin, 2008). For stable estimation, \code{nboot=200} is usually recommended.}
+\item{R}{the number of generating perturbed variable for variance estimation of regression estimator (Zeng and Uin, 2008). For stable estimation, \code{R=200} is usually recommended.}
 }
 \value{
 \code{aft_rank} returns a data frame containing at least the following components:
 \itemize{
   \item \code{est}: regression estimator.
   \item \code{se}: standard error estimates for \code{est}.
-  \item \code{pvalue}: p-value, which will be appeared when the value of \code{nboot} is larger than one.
+  \item \code{pvalue}: p-value, which will be appeared when the value of \code{R} is larger than one.
 }
 }
 \description{
@@ -68,9 +68,9 @@ U = exp(dplyr::case_when(TRUE ~ T, T>V ~ V, T<U ~ -Inf))
 V = exp(dplyr::case_when(TRUE ~ T, T>V ~ Inf, T<U ~ U))
 Delta = ifelse(U==V, 1, 0)
 aft_rank(U = U, V = V, X = X, Delta = Delta,
-         type = "gehan", nboot = 10)
+         type = "gehan", R = 10)
 aft_rank(U = U, V = V, X = X, Delta = Delta,
-         type = "logrank", nboot = 10)
+         type = "logrank", R = 10)
 
 # Data example
 library(PICBayes)
@@ -85,9 +85,9 @@ d = with(dt0,
                     id = SITE))
 U = d$U; V = d$V; X = cbind(d$x1,d$x2); Delta = d$Delta; id = d$id
 aft_rank(U = U, V = V, X = X, Delta = Delta, id = id, 
-         alpha = 1, type = "gehan", nboot = 10)
+         alpha = 1, type = "gehan", R = 10)
 aft_rank(U = U, V = V, X = X, Delta = Delta, id = id, 
-         alpha = 1, type = "logrank", nboot = 10)
+         alpha = 1, type = "logrank", R = 10)
 }
 }
 \references{
