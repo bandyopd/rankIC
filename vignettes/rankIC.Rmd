@@ -155,9 +155,9 @@ Biometrika, 90(2), 341--353.
 Weighted rank regression for clustered data analysis. 
 Biometrics, 64(1), 39--45.
 
-* Choi, T., Choi, S. and Bandyopadhyay, D. (2022+). 
+* Choi, T., Choi, S. and Bandyopadhyay, D. (2025+). 
 Rank estimation for the accelerated failure time model with partially interval-censored data. 
-Submitted to Biometrics.
+(Accepted), Statistica Sinica
 
 * Pan, C. (2021).
 PICBayes: Bayesian Models for Partly Interval-Censored Data.
